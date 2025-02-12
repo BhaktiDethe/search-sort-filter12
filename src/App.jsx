@@ -10,13 +10,15 @@ function App() {
 const [searchText, setSearchText] = useState("");
 const [filteredUsers,setFilteredUsers] = useState(USERS);
 const [filterCity, setFilterCity] = useState("");
+const [filterAge, setFilterAge] = useState("");
+const [SortOrder, setSortOrder] = useState("asc");
 
 useEffect(() => {
   if (!searchText){
     setFilteredUsers(USERS);
     return;
   }
-   const tempFilteredUsers = USERS.filter((user) => {
+   const tempfilteredUsers = USERS.filter((user) => {
     if(user.name.toLocaleLowerCase().includes(searchText)){
       return true;
     }
@@ -29,8 +31,39 @@ useEffect(() => {
       return false;
     }
     });
-    setFilteredUsers(tempFilteredUsers);
+    setFilteredUsers(tempfilteredUsers);
 }, [searchText]);
+
+useEffect(()=>{
+  if(!filterCity && !filterAge){
+    setFilteredUsers(USERS);
+    return;
+  }
+  const tempfilteredUsers = USERS.filter((user)=> {
+if(filterCity &&
+   user.city === filterCity &&
+  filterAge &&
+user.age === parseInt(filterAge)
+){
+  return true;
+}
+
+if (filterAge && !filterCity && user.age === parseInt(filterAge)){
+  return true;
+}
+if (filterCity && !filterCity && user.city === parseInt(filterAge)){
+  return true;
+}
+
+return false;
+});
+setFilteredUsers(tempfilteredUsers);
+}, [filterCity,filterAge]);
+
+
+
+
+
 
   return (
     <div className="bg-slate-100 min-h-screen">
@@ -58,29 +91,46 @@ useEffect(() => {
   <div>
     <span>Filter By City: </span>
     <select className="bg-white text-lg my-2  rounded-lg px-5"
-    value={filterCity}
-    onChange={(e) => setFilterCity(e.target.value)}
+    value={filterAge}
+    onChange={(e) => setFilterAge(e.target.value)}
     >
 
       <option value="">All</option>
-      <option value="Mumbai">Mumbai</option>
-      <option value="Delhi">Delhi</option>
-      <option value="Bangalore">Bangalore</option>
-      <option value="Hyderabad">Hyderabad</option>
+      {
+        USERS.map((user) => {
+          return<option key={user.city} value={user.city}>{user.city}</option>
+        })
+      }
+     
       
     </select>
   </div>
   <div> 
     <span>Filter By Age: </span>
-    <select className="bg-white text-lg my-2  rounded-lg px-5">
+    <select className="bg-white text-lg my-2  rounded-lg px-5"
+    value={filterCity}
+    onChange={(e) => setFilterAge(e.target.value)}>
       <option value="">All</option>
-      <option value="25">25</option>
-      <option value="29">29</option>
-      <option value="30">30</option>
-      <option value="67">67</option>
+      {
+        USERS.map((user) => {
+          return<option key={user.age} value={user.age}>{user.age}</option>
+        })
+      }
       
     </select></div>
 </div>
+
+
+<div>
+        <span>Sort By Name:</span>
+          <select className="bg-white text-lg my-2 rounded-lg px-5"
+           value={SortOrder}
+           onChange={(e)=> setSortOrder(e.target.value)}>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+           
+          </select>
+        </div>
 
 <div className="flex flex-wrap justify-around">
    {filteredUsers.map((userData, index)=>{
