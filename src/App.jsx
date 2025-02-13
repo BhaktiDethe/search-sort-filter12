@@ -13,6 +13,18 @@ const [filterCity, setFilterCity] = useState("");
 const [filterAge, setFilterAge] = useState("");
 const [SortOrder, setSortOrder] = useState("asc");
 
+
+useEffect(()=>{
+  const tempFilteredUsers = filteredUsers.sort((a,b)=>{
+    if(SortOrder === 'asc'){
+      return a.name.localeCompare(b.name)
+    }else{
+      return b.name.localeCompare(a.name)
+    }
+  })
+  setFilteredUsers([...tempFilteredUsers])
+}, [SortOrder,filteredUsers])
+
 useEffect(() => {
   if (!searchText){
     setFilteredUsers(USERS);
@@ -34,34 +46,33 @@ useEffect(() => {
     setFilteredUsers(tempfilteredUsers);
 }, [searchText]);
 
+
 useEffect(()=>{
   if(!filterCity && !filterAge){
     setFilteredUsers(USERS);
     return;
   }
-  const tempfilteredUsers = USERS.filter((user)=> {
-if(filterCity &&
+  const tempFilteredUsers = USERS.filter((user)=> {
+if(
+  filterCity &&
    user.city === filterCity &&
   filterAge &&
-user.age === parseInt(filterAge)
+user.age === (filterAge)
 ){
   return true;
 }
 
-if (filterAge && !filterCity && user.age === parseInt(filterAge)){
+if (filterAge && !filterCity && user.age === (filterAge)){
   return true;
 }
-if (filterCity && !filterCity && user.city === parseInt(filterAge)){
+if (filterCity && !filterAge && user.city === filterCity){
   return true;
 }
 
 return false;
 });
-setFilteredUsers(tempfilteredUsers);
+setFilteredUsers(tempFilteredUsers);
 }, [filterCity,filterAge]);
-
-
-
 
 
 
@@ -91,8 +102,8 @@ setFilteredUsers(tempfilteredUsers);
   <div>
     <span>Filter By City: </span>
     <select className="bg-white text-lg my-2  rounded-lg px-5"
-    value={filterAge}
-    onChange={(e) => setFilterAge(e.target.value)}
+    value={filterCity}
+    onChange={(e) => setFilterCity(e.target.value)}
     >
 
       <option value="">All</option>
@@ -107,9 +118,10 @@ setFilteredUsers(tempfilteredUsers);
   </div>
   <div> 
     <span>Filter By Age: </span>
-    <select className="bg-white text-lg my-2  rounded-lg px-5"
-    value={filterCity}
-    onChange={(e) => setFilterAge(e.target.value)}>
+    <select className="bg-white text-lg my-2 rounded-lg px-5"
+    value={filterAge}
+    onChange={(e)=> setFilterAge(e.target.value)}
+    >
       <option value="">All</option>
       {
         USERS.map((user) => {
@@ -117,20 +129,23 @@ setFilteredUsers(tempfilteredUsers);
         })
       }
       
-    </select></div>
+    </select>
+    </div>
+    <div> 
+    <span>Sort By Name: </span>
+    <select className="bg-white text-lg my-2  rounded-lg px-5"
+    value={SortOrder}
+    onChange={(e) => setSortOrder(e.target.value)}>
+      
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+      
+    </select>
+    </div>
 </div>
 
 
-<div>
-        <span>Sort By Name:</span>
-          <select className="bg-white text-lg my-2 rounded-lg px-5"
-           value={SortOrder}
-           onChange={(e)=> setSortOrder(e.target.value)}>
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-           
-          </select>
-        </div>
+
 
 <div className="flex flex-wrap justify-around">
    {filteredUsers.map((userData, index)=>{
